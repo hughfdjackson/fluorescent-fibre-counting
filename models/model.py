@@ -161,7 +161,6 @@ def _print_title_card(title, message):
     print(bottom_line)
 
 
-
 ## Keras callbacks + training ##
 def _early_stopping():
     return EarlyStopping(
