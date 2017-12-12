@@ -177,7 +177,7 @@ def _model_checkpoint(file_path):
         save_best_only = True
     )
 
-def _learning_rate_scheduler(step = 15, initial_learning_rate = 1e-4, minimum_learning_rate = 1e-6):
+def _learning_rate_scheduler(step = 15, initial_learning_rate = 1e-3, minimum_learning_rate = 1e-5):
     def anneal(epoch):
         learning_rate = initial_learning_rate / (10 ** (epoch // step))
 
