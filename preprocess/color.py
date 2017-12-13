@@ -23,14 +23,16 @@ def region_with_slopes(xs, range, std_div):
 
     return max_boost
 
-def correct_color(image):
-
+def correct_color(args, image):
     hsv = rgb_to_hsv(image)
     hue, saturation, value = hsv[:, :, 0], hsv[:, :, 1], hsv[:, :, 2]
 
+    min_hue = args.min_hue or 0.40
+    max_hue = args.max_hue or 0.57
+
     hue_slope = region_with_slopes(
         hue,
-        range = (0.40, 0.57),
+        range = (min_hue, max_hue),
         std_div = 0.025)
 
     return value * gaussian_filter(hue_slope, sigma = 1)
