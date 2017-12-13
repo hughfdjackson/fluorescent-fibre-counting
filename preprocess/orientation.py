@@ -4,29 +4,25 @@ import numpy as np
 from PIL import Image
 from functools import partial
 
+_dictionary = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
 
-dictionary = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
-
-destination_dimensions = np.array([
+_destination_dimensions = np.array([
     [0, 0],
     [4000, 0],
     [4000, 3000],
     [0, 3000],
-
 ], dtype = 'float32')
 
-id_mapping = {
-    0: 'top-left',
-    1: 'top-right',
-    2: 'bottom-right',
-    3: 'bottom-left',
-}
-
 def correct_orientation(image):
-    corners, identifiers, _ = aruco.detectMarkers(image, dictionary)
-    corners_array = np.array(corners).squeeze()
-    middle = corners_array.mean(axis = 1).mean(axis = 0)
-    extreme_corners = np.array(list(map(partial(extreme, middle), corners_array)))
+    marker_boxes, identifiers, _ = aruco.detectMarkers(image, _dictionary)
+    assert len(marker_boxes) == 4, 'one of the aruco markers cannot be found'
+
+    marker_boxes_array = np.array(marker_boxes).squeeze()
+
+    middle = marker_boxes_array.mean(axis = 1).mean(axis = 0)
+    extreme_corners = np.array([
+        _extreme(middle, marker_box) for marker_box in marker_boxes_array
+    ])
     points = dict(zip(list(identifiers.squeeze()), extreme_corners))
 
     corners_to_transform = np.array([
@@ -36,20 +32,11 @@ def correct_orientation(image):
         points[3]
     ], dtype = 'float32')
 
-    M = cv2.getPerspectiveTransform(corners_to_transform, destination_dimensions)
+    M = cv2.getPerspectiveTransform(corners_to_transform, _destination_dimensions)
     return cv2.warpPerspective(image, M, (4000, 3000))
 
 
-def fill_in_corners(points):
-    for i in id_mapping.keys():
-        if not i in points:
-            point = input('what is the most extreme corner of the {} marker? '.format(id_mapping[i]))
-            points[i] = [float(i) for i in point.split(',')]
-
-    return points
-
-
-def extreme(middle, box):
+def _extreme(middle, box):
     """
     Find the corner of a box that's most extreme with respect to some
     centre point `middle`.

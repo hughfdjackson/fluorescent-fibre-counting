@@ -61,8 +61,7 @@ def _preprocess_file(input_path, output_dir, pipeline):
         Image.fromarray(pipeline(image)).save(path.join(output_dir, file_name))
 
     except Exception as e:
-        print("couldn't pre-process {}".format(input_path))
-        raise e
+        print("couldn't pre-process {}: {}".format(input_path, e))
 
 def _add_optional_boolean_flag(parser, arg, help = None):
     return parser.add_argument(arg, action = 'store_true', default = None, help = help)
