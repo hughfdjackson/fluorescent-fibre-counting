@@ -23,7 +23,7 @@ def correct_orientation(image):
     extreme_corners = np.array([
         _extreme(middle, marker_box) for marker_box in marker_boxes_array
     ])
-    points = dict(zip(list(identifiers.squeeze()), extreme_corners))
+    points = { identifier: corner for identifier, corner in zip(list(identifiers.squeeze()), extreme_corners) }
 
     corners_to_transform = np.array([
         points[0],
