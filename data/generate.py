@@ -134,6 +134,8 @@ def _draw_fibre(state, image):
 
     return image
 
+def _vector(angle, length):
+    return (cos(angle) * length, sin(angle) * length)
 
 class Fibre(Component):
 
