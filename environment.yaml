@@ -13,6 +13,7 @@ dependencies:
 - holoviews=1.8.3=py36_0
 - matplotlib=2.0.2=np113py36_0
 - bokeh=0.12.7=py36_0
+- jupyter=1.0.0 # for development purposes - not needed for a real install
 - pip:
   - keras==2.0.8
   - tensorflow==1.2

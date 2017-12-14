@@ -39,25 +39,6 @@ def run_realistic_tests(model):
         test(m, b)[1] for b in batches
     ])
 
-# def _load_image(path):
-#     image = ImageNormalizer.normalize(np.asarray(Image.open(path)))
-#     return image.reshape(image.shape + (1,))
-#
-# ## TODO: turn into script
-# def run_test_against_real_data(model):
-#     paths = glob('report/lifts/processed/*')
-#     file_names = [path.basename(p) for p in paths]
-#     images = [
-#         _load_image(path) for path in paths
-#     ]
-#
-#     num_images = len(images)
-#     h, w = images[0].shape[:2]
-#     model = model.resize((w, h))
-#
-#     test_set = images, np.zeros(num_images), np.zeros(num_images), np.zeros(num_images)
-#     return test(model, test_set, test_labels = file_names)
-#
 
 if __name__ == '__main__':
     ### TODO: set up for training fcrn_b_peak_mask + fcrn_a_peak_mask

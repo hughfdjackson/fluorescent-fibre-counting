@@ -143,6 +143,28 @@ def test(model, test_set, test_labels = None):
         'density': counts / (w * h)
     })
 
+## Predictions ##
+def predict(model, images, image_labels):
+    _print_title_card(
+        title = model.name,
+        message = 'predicting fluorescent fibre counts using {}.'.format(model.name)
+    )
+
+    def count_one(image, label):
+        print('predicting image {}'.format(label))
+        return model.post_process_one(model.predict_one(image))
+
+    predicted_counts = [
+        count_one(image, label) for label, image in zip(image_labels, images)
+    ]
+
+    return pd.DataFrame({
+        'model': [model.name] * len(image_labels),
+        'label': image_labels,
+        'predicted_count': predicted_counts,
+    })
+
+
 
 ## Training ##
 
