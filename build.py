@@ -19,9 +19,9 @@ from PIL import Image
 
 def train_and_test(model):
     trained, training_history = train(model, training_set(size = 100000))
-    test_results = run_realistic_tests(trained)
+    #test_results = run_realistic_tests(trained)
 
-    save_build(trained,training_history, test_results)
+    save_build(trained,training_history, None)
 
 
 def run_realistic_tests(model):
@@ -42,5 +42,5 @@ def run_realistic_tests(model):
 
 if __name__ == '__main__':
     ### TODO: set up for training fcrn_b_peak_mask + fcrn_a_peak_mask
-    train_and_test(fcrn_a_peak_mask())
+    #train_and_test(fcrn_a_peak_mask())
     train_and_test(fcrn_b_peak_mask())
