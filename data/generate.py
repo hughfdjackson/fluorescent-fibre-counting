@@ -191,7 +191,7 @@ class NonFluorescentFibre(Component):
 
         return NonFluorescentFibre({
             'path': path,
-            'color': _generate_colors(length, (50, 100), (0, 25)),
+            'color': _generate_colors(length, (0, 50), (0, 25)),
             'width': width,
             'bubble': FibreBubble.generate(path, width)
         })
@@ -206,7 +206,7 @@ class FibreBubble(Component):
         return FibreBubble({
             'path': path,
             'width': floor(width * _pick_float(2.0, 7.0)),
-            'alpha': _pick_natural(0, 8)
+            'alpha': _pick_natural(0, 3)
         })
 
     def draw(self, image):
@@ -243,7 +243,7 @@ class Background(Component):
             'color': _color(_pick_natural(0, 50)),
             'bounding_box': [(0, 0), config.image_dims],
             'noise_bounds': _gen_noise_bounds(config.image_dims),
-            'noise_degree': _pick_float(0, 30),
+            'noise_degree': _pick_float(0, 10),
             'image_dims': config.image_dims
         })
 
