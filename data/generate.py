@@ -134,8 +134,6 @@ def _draw_fibre(state, image):
 
     return image
 
-def _vector(angle, length):
-    return (cos(angle) * length, sin(angle) * length)
 
 class Fibre(Component):
 
@@ -243,7 +241,7 @@ class Background(Component):
             'color': _color(_pick_natural(0, 50)),
             'bounding_box': [(0, 0), config.image_dims],
             'noise_bounds': _gen_noise_bounds(config.image_dims),
-            'noise_degree': _pick_float(0, 10),
+            'noise_degree': _pick_float(0, 3),
             'image_dims': config.image_dims
         })
 
