@@ -18,7 +18,7 @@ import numpy as np
 from PIL import Image
 
 def train_and_test(model):
-    trained, training_history = train(model, training_set(size = 100000))
+    trained, training_history = train(model, training_set(size = 50000))
     #test_results = run_realistic_tests(trained)
 
     save_build(trained,training_history, None)
