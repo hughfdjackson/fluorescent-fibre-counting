@@ -21,40 +21,31 @@ def _fcrn_a_base():
     inputs = Input(batch_shape = (None, 64, 64, 1))
     outputs = sequence_layers([
         inputs,
-        Convolution2D(32, (3, 3), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
-        Activation('relu'),
+        _conv_bn_relu(32, (3, 3)),
         MaxPooling2D((2, 2)),
 
         # Conv
-        Convolution2D(64, (3, 3), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
-        Activation('relu'),
+        _conv_bn_relu(64, (3, 3)),
         MaxPooling2D((2, 2)),
 
         # Conv
-        Convolution2D(128, (3, 3), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
-        Activation('relu'),
+        _conv_bn_relu(128, (3, 3)),
         MaxPooling2D((2, 2)),
 
         # FC
-        Convolution2D(512, (5, 5), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
-        Activation('relu'),
+        ## TODO:  this is (3, 3) in the paper - switch to that?
+        _conv_bn_relu(512, (5, 5)),
 
         # UnConv
+        ## TODO: Missing ReLUs
         UpSampling2D((2, 2)),
-        Convolution2D(128, (3, 3), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
+        _conv_bn_relu(128, (3, 3)),
 
         UpSampling2D((2, 2)),
-        Convolution2D(64, (3, 3), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
+        _conv_bn_relu(64, (3, 3)),
 
         UpSampling2D((2, 2)),
-        Convolution2D(32, (3, 3), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
+        _conv_bn_relu(32, (3, 3)),
 
         Convolution2D(1, (1, 1), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False)
     ])
@@ -62,53 +53,37 @@ def _fcrn_a_base():
     return Model(name = 'fcrn_a', inputs = inputs, outputs = outputs)
 
 
+def _conv_bn_relu(filters, kernel_size):
+    return sequence_layers([
+        Convolution2D(filters, kernel_size, kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
+        BatchNormalization(),
+        Activation('relu'),
+    ])
+
 def _fcrn_b_base():
     inputs = Input(batch_shape = (None, 64, 64, 1))
     outputs = sequence_layers([
         inputs,
-        Convolution2D(32, (3, 3), input_shape = (64, 64, 1), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
-        Activation('relu'),
+        _conv_bn_relu(32, (3, 3)),
         MaxPooling2D((2, 2)),
 
         # Conv
-        Convolution2D(64, (3, 3), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
-        Activation('relu'),
+        _conv_bn_relu(64, (3, 3)),
 
         # Conv
-        Convolution2D(128, (3, 3), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
-        Activation('relu'),
+        _conv_bn_relu(128, (3, 3)),
         MaxPooling2D((2, 2)),
 
         # Conv
-        Convolution2D(256, (5, 5), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
-        Activation('relu'),
+        _conv_bn_relu(256, (5, 5)),
 
-        # FC
-        #
-        # According to https://github.com/WeidiXie/cell_counting_v2/blob/d37bf7048120faf958a51930bfe9e558206faaa0/model.py#L82
-        # it seems that the 'Fully Connected Layer (Implemented as convolution)' is literally the same
-        # as a convolution + BatchNormalization + ReLU pass.  For that to be true, I would have expected the
-        # kernal size to be the same as the image size at this point, but that doesn't seem to be the case..
-        #
-        # There may be some equivalance here that I'm not quite getting.
-        Convolution2D(128, (3, 3), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
-        Activation('relu'),
+        # Conv
+        _conv_bn_relu(128, (3, 3)),
 
         # UnConv
-
-        # Here, the paper says it's a stack of Upsampling + ReLU + Convolution,
-        # but Weidi Xie's implementation suggests its actually Upsampling + Convolution + ReLU
-        # (https://github.com/WeidiXie/cell_counting_v2/blob/d37bf7048120faf958a51930bfe9e558206faaa0/model.py#L107
-        #
-        # In this case, I'm going with the paper's description.  I don't know if that's the right call
         UpSampling2D((2, 2)),
-        Convolution2D(256, (5, 5), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
+        _conv_bn_relu(256, (5, 5)),
+
 
         UpSampling2D((2, 2)),
         Convolution2D(1, (1, 1), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False)
