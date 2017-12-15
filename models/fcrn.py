@@ -7,7 +7,7 @@ from keras.optimizers import SGD
 import tensorflow as tf
 
 from models.wrapper import Wrapper
-from models.model import sequence_layers, clone
+from models.model import sequence_layers, inner_layer, clone
 from data.normalized import DensityMapNormalizer
 
 def fcrn_a_peak_mask():
@@ -15,6 +15,14 @@ def fcrn_a_peak_mask():
 
 def fcrn_b_peak_mask():
     return FCRN_Peak_Mask_B(_fcrn_b_base())
+
+def _conv_bn_relu(filters, kernel_size):
+    return inner_layer([
+        Convolution2D(filters, kernel_size, kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
+        BatchNormalization(),
+        Activation('relu'),
+    ])
+
 
 
 def _fcrn_a_base():
@@ -52,13 +60,6 @@ def _fcrn_a_base():
 
     return Model(name = 'fcrn_a', inputs = inputs, outputs = outputs)
 
-
-def _conv_bn_relu(filters, kernel_size):
-    return sequence_layers([
-        Convolution2D(filters, kernel_size, kernel_initializer = 'orthogonal', padding = 'same', use_bias = False),
-        BatchNormalization(),
-        Activation('relu'),
-    ])
 
 def _fcrn_b_base():
     inputs = Input(batch_shape = (None, 64, 64, 1))

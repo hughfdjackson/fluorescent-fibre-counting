@@ -20,6 +20,10 @@ clone = _clone
 def sequence_layers(layers):
     return reduce(lambda l1, l2: l2(l1), layers)
 
+def inner_layer(layers):
+    return reduce(lambda l1, l2: lambda x: l2(l1(x)), layers)
+
+
 def load(file_path):
     file_base_name = path.splitext(path.basename(file_path))[0]
     model = load_model(file_path)
