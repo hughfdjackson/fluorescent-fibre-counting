@@ -33,11 +33,11 @@ class Component():
         return array
 
 
-def _generate_point(point, angle, rate_of_angle_change):
+def _generate_point(config, point, angle, rate_of_angle_change):
     np.random.seed(_pick_natural(maximum = 1000))
 
     angle += rate_of_angle_change
-    rate_of_angle_change += np.random.normal(loc = 0, scale = 0.075)
+    rate_of_angle_change += np.random.normal(loc = 0, scale = config.curve_change_sigma)
     rate_of_angle_change = np.clip(rate_of_angle_change, -pi * 0.125, pi * 0.125)
 
     vector = _vector(angle, 1)
@@ -55,7 +55,7 @@ def _generate_path(config, length, bounds):
     path = [point]
 
     for length_so_far in range(length):
-        point, angle, rate_of_angle_change = _generate_point(point, angle, rate_of_angle_change)
+        point, angle, rate_of_angle_change = _generate_point(config, point, angle, rate_of_angle_change)
 
         path.append(point)
 
@@ -382,7 +382,9 @@ class Config:
            max_fibre_width = 3, min_fibre_width = 1,
            max_fibre_length = 125, min_fibre_length = 20,
            max_background_fibres = 2,
-           mask_size = (12, 12)):
+           curve_change_sigma = 0.075,
+           mask_size = (12, 12) ## TODO: remove
+           ):
 
         self.image_dims = image_dims
         self.max_fibres = max_fibres
@@ -392,6 +394,7 @@ class Config:
         self.max_fibre_length = max_fibre_length
         self.min_fibre_length = min_fibre_length
         self.max_background_fibres = max_background_fibres
+        self.curve_change_sigma = curve_change_sigma
         self.mask_size = mask_size
 
 def _pick_natural(minimum = 0, maximum = 1):
@@ -475,9 +478,9 @@ def render_components(components, config):
     image = np.asarray(create_fibre_image(components, config)).reshape(h, w, 1)
     density_map = np.asarray(create_density_map(components, config)).reshape(h, w, 1)
     masks = np.asarray(create_mask(components, config)).reshape(h, w, 1)
-    count = len([c for c in components if isinstance(c, Fibre)])
+    count = np.sum(density_map) / 2.
 
-    return (image, density_map, masks, np.float(count))
+    return (image, density_map, masks, count)
 
 def render_components_set(components_set, config):
     with Pool() as p:

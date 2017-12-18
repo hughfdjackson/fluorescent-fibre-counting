@@ -39,8 +39,24 @@ def run_realistic_tests(model):
         test(m, b)[1] for b in batches
     ])
 
+def test_with_increasing_curve(model):
+    sigma_min = 0.
+    sigma_max = 0.45
+    sigma_values = np.around(np.linspace(sigma_min, sigma_max, 10), 3)
+
+    test_set_size = 100
+
+    image_dims = (512, 512)
+
+    test_set_configs = [
+        Config(image_dims = image_dims, curve_change_sigma = sigma, max_fibres = 10) for sigma in sigma_values
+    ]
+
+    test_results = pd.concat([
+        test(model, test_set(config, size = test_set_size))[1].assign(curve_change_sigma = sigma) for sigma, config in zip(sigma_values, test_set_configs)
+    ])
+
+    test_results.to_csv('curve_test_results.csv')
 
 if __name__ == '__main__':
-    ### TODO: set up for training fcrn_b_peak_mask + fcrn_a_peak_mask
-    #train_and_test(fcrn_a_peak_mask())
-    train_and_test(fcrn_b_peak_mask())
+    test_with_increasing_curve(load('builds/FCRN_Peak_Mask_B-fcrn_b/1/FCRN_Peak_Mask_B-fcrn_b.hdf5'))
