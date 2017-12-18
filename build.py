@@ -46,7 +46,7 @@ def test_with_increasing_curve(model):
     model = model.resize(image_dims)
 
     sigma_min = 0.
-    sigma_max = 0.45
+    sigma_max = 0.045
     sigma_values = np.around(np.linspace(sigma_min, sigma_max, 10), 3)
 
 
