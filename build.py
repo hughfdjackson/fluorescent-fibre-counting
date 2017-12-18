@@ -41,17 +41,17 @@ def run_realistic_tests(model):
 
 def test_with_increasing_curve(model):
     test_set_size = 100
-    image_dims = (512, 512)
+    image_dims = (3555, 1556)
 
     model = model.resize(image_dims)
 
     sigma_min = 0.
-    sigma_max = 0.045
-    sigma_values = np.around(np.linspace(sigma_min, sigma_max, 10), 3)
+    sigma_max = 0.025
+    sigma_values = np.around(np.linspace(sigma_min, sigma_max, 11), 3)
 
 
     test_set_configs = [
-        Config(image_dims = image_dims, curve_change_sigma = sigma, max_fibres = 10) for sigma in sigma_values
+        Config(image_dims = image_dims, curve_change_sigma = sigma, min_fibres = 100, max_fibres = 200) for sigma in sigma_values
     ]
 
     test_results = pd.concat([
