@@ -23,7 +23,7 @@ Counting fluorescent fibres involves:
 
 ### Taking images under UV light
 
-Refer to the ["taking photos of slides" guide](/fluorescent-fibre-counting/wiki/Taking-photos-of-Slides) for more details.
+Refer to the ["taking photos of slides" guide](https://github.com/hughfdjackson/fluorescent-fibre-counting/wiki/Taking-photos-of-Slides) for more details.
 
 ### Preprocessing images
 
