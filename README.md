@@ -50,7 +50,9 @@ $ python -m count <directory of preprocessed images> results.csv
 
 ## Running on the GPU
 
-Since this project uses tensorflow.  To install with GPU support:
+Since this project uses tensorflow, it's advisable to use the GPU if you've got access to an NVIDIA graphics card.  This can speed up counting fibres by a factor of ~15 (e.g. from 1m 30 per slide to ~6 seconds).
+
+To install with GPU support:
 
 1. find the installation instructions for your platform from https://www.tensorflow.org/install/
 2. follow instructions to prepare your platform for use with tensorflow-gpu
