@@ -131,7 +131,7 @@ class FCRN_Peak_Mask_B(FCRN_Peak_Mask):
         super().__init__(model, threshold = 1.91, mask_size = 3)
 
 
-
+## Post-processing with Peak Masks ##
 def _count_peak_mask(density_maps, threshold, mask_size):
    with tf.Graph().as_default():
         density_map_tensor = tf.constant(density_maps)
@@ -175,8 +175,7 @@ def _sliding_window(a, kernel_size):
         rates = [1, 1, 1, 1],
         padding = 'SAME')
 
-
-
+## resizing ##
 def _resize_fcrn(model, target_size):
     m = clone(model)
     target_x, target_y = target_size
@@ -190,4 +189,3 @@ def _resize_fcrn(model, target_size):
     new_model.name = model.name
 
     return new_model
-
