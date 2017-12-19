@@ -36,7 +36,7 @@ $ python -m preprocess
 
 The `--min-hue` and `--max-hue` values should be adjusted to best highlight the colour of fibre you're attempting to isolate.
 
-For more details, see the ["image preprocessing" guide](guides/image-preprocessing.ipynb)
+For more details, see the ["image preprocessing" guide](://github.com/hughfdjackson/fluorescent-fibre-counting/wiki/Image-Preprocessing)
 
 ### Counting fibres
 
