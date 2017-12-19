@@ -23,7 +23,7 @@ Counting fluorescent fibres involves:
 
 ### Taking images under UV light
 
-Refer to (the "taking photos of slides" guide for more details)[guides/taking-photos-of-slides.ipynb].
+Refer to the ["taking photos of slides" guide](guides/taking-photos-of-slides.ipynb) for more details.
 
 ### Preprocessing images
 
@@ -36,7 +36,7 @@ $ python -m preprocess
 
 The `--min-hue` and `--max-hue` values should be adjusted to best highlight the colour of fibre you're attempting to isolate.
 
-For more details, see [the "image preprocessing" guide](guides/image-preprocessing.ipynb)
+For more details, see the ["image preprocessing" guide](guides/image-preprocessing.ipynb)
 
 ### Counting fibres
 
