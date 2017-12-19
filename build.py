@@ -47,7 +47,7 @@ def test_with_increasing_curve(model):
 
     sigma_min = 0.
     sigma_max = 0.025
-    sigma_values = np.linspace(sigma_min, sigma_max, 11)
+    sigma_values = np.around(np.linspace(sigma_min, sigma_max, 2), 4)
 
 
     test_set_configs = [
