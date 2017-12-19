@@ -36,7 +36,7 @@ $ python -m preprocess
 
 The `--min-hue` and `--max-hue` values should be adjusted to best highlight the colour of fibre you're attempting to isolate.
 
-For more details, see the ["image preprocessing" guide](guides/image-preprocessing.ipynb)
+For more details, see the ["image preprocessing" guide](https://github.com/hughfdjackson/fluorescent-fibre-counting/wiki/Image-Preprocessing)
 
 ### Counting fibres
 
@@ -44,13 +44,15 @@ To obtain an estimate of the count from pre-processed images:
 
 ```bash
 $ source activate fluorescent-fibre-counting
-$ python -m count.py <directory of preprocessed images> results.csv
+$ python -m count <directory of preprocessed images> results.csv
 ```
 
 
 ## Running on the GPU
 
-Since this project uses tensorflow.  To install with GPU support:
+Since this project uses tensorflow, it's advisable to use the GPU if you've got access to an NVIDIA graphics card.  This can speed up counting fibres by a factor of ~15 (e.g. from 1m 30 per slide to ~6 seconds).
+
+To install with GPU support:
 
 1. find the installation instructions for your platform from https://www.tensorflow.org/install/
 2. follow instructions to prepare your platform for use with tensorflow-gpu

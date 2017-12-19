@@ -1,6 +1,7 @@
 from data.normalized import DensityMapNormalizer, ImageNormalizer
 from data.generate import generate_training_example, Config
 
+import numpy as np
 from numpy import array_equal
 from numpy.testing import assert_almost_equal
 
@@ -15,7 +16,7 @@ def test_normalize_image():
         ImageNormalizer.denormalize(normalized),
         image
     )
-    assert math.isclose(normalized.max(), image.max() / 255.0)
+    assert math.isclose(normalized.max(), np.float32(image.max() / 255.0))
 
 
 def test_normalize_density_map():
