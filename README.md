@@ -4,7 +4,7 @@ This project aims to estimate the number of fluorescent fibres present in a UV-i
 
 ## Installation
 
-After installing [conda](https://docs.anaconda.com/anaconda/install/)
+After installing [conda](https://docs.anaconda.com/anaconda/install/):
 
 ```bash
 $ git clone https://github.com/hughfdjackson/fluorescent-fibre-counting.git
@@ -15,11 +15,28 @@ $ source activate fluorescent-fibre-counting
 
 ## Usage
 
-Obtaining a count of fluorescent fibres involves two steps - obtaining preprocessed images of the fibres, and then counting them with the model.
+Counting fluorescent fibres involves:
 
-### Taking and pre-processing images
+1. Taking an image of your slide under UV light
+2. Preprocessing the images
+3. Feeding the preprocessed images to the model
 
-TODO
+### Taking images under UV light
+
+Refer to (the "taking photos of slides" guide for more details)[guides/taking-photos-of-slides.ipynb].
+
+### Preprocessing images
+
+Once you've gotten your images (preferably in an uncompressed `.tiff` format):
+
+```bash
+$ source activate fluorescent-fibre-counting
+$ python -m preprocess
+```
+
+The `--min-hue` and `--max-hue` values should be adjusted to best highlight the colour of fibre you're attempting to isolate.
+
+For more details, see [the "image preprocessing" guide](guides/image-preprocessing.ipynb)
 
 ### Counting fibres
 
@@ -29,6 +46,7 @@ To obtain an estimate of the count from pre-processed images:
 $ source activate fluorescent-fibre-counting
 $ python -m count.py <directory of preprocessed images> results.csv
 ```
+
 
 ## Running on the GPU
 
