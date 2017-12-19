@@ -1,5 +1,4 @@
 from models.fcrn import (
-    fcrn_a_peak_mask,
     fcrn_b_peak_mask
 )
 

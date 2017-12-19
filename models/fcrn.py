@@ -10,11 +10,32 @@ from models.wrapper import Wrapper
 from models.model import sequence_layers, inner_layer, clone
 from data.normalized import DensityMapNormalizer
 
-def fcrn_a_peak_mask():
-    return FCRN_Peak_Mask_A(_fcrn_a_base())
+## Wrappers - for pre/post processing and resizing ##
 
-def fcrn_b_peak_mask():
-    return FCRN_Peak_Mask_B(_fcrn_b_base())
+class FCRN_Peak_Mask(Wrapper):
+    def __init__(self, model, threshold, mask_size):
+        self.threshold = threshold
+        self.mask_size = mask_size
+        super().__init__(model)
+
+    def post_process(self, predictions):
+        return _count_peak_mask(predictions, self.threshold, self.mask_size)
+
+    def resize(self, target_size):
+        return FCRN_Peak_Mask(_resize_fcrn(self.model, target_size),
+                              threshold = self.threshold,
+                              mask_size = self.mask_size)
+
+    def compile(self):
+        optimizer = SGD(momentum = 0.9, nesterov = True)
+        self.model.compile(optimizer, 'mean_squared_error')
+
+    def fit(self, images, labels, **kwargs):
+        density_map = labels[0]
+        return self.model.fit(images, density_map, **kwargs)
+
+
+
 
 def _conv_bn_relu(filters, kernel_size):
     return inner_layer([
@@ -23,43 +44,55 @@ def _conv_bn_relu(filters, kernel_size):
         Activation('relu'),
     ])
 
+# def fcrn_a_peak_mask():
+#     return FCRN_Peak_Mask_A(_fcrn_a_base())
 
 
-def _fcrn_a_base():
-    inputs = Input(batch_shape = (None, 64, 64, 1))
-    outputs = sequence_layers([
-        inputs,
-        _conv_bn_relu(32, (3, 3)),
-        MaxPooling2D((2, 2)),
+#
+# def _fcrn_a_base():
+#     inputs = Input(batch_shape = (None, 64, 64, 1))
+#     outputs = sequence_layers([
+#         inputs,
+#         _conv_bn_relu(32, (3, 3)),
+#         MaxPooling2D((2, 2)),
+#
+#         # Conv
+#         _conv_bn_relu(64, (3, 3)),
+#         MaxPooling2D((2, 2)),
+#
+#         # Conv
+#         _conv_bn_relu(128, (3, 3)),
+#         MaxPooling2D((2, 2)),
+#
+#         # FC
+#         ## TODO:  this is (3, 3) in the paper - switch to that?
+#         _conv_bn_relu(512, (5, 5)),
+#
+#         # UnConv
+#         UpSampling2D((2, 2)),
+#         _conv_bn_relu(128, (3, 3)),
+#
+#         UpSampling2D((2, 2)),
+#         _conv_bn_relu(64, (3, 3)),
+#
+#         UpSampling2D((2, 2)),
+#         _conv_bn_relu(32, (3, 3)),
+#
+#         Convolution2D(1, (1, 1), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False)
+#     ])
+#
+#     return Model(name = 'fcrn_a', inputs = inputs, outputs = outputs)
 
-        # Conv
-        _conv_bn_relu(64, (3, 3)),
-        MaxPooling2D((2, 2)),
 
-        # Conv
-        _conv_bn_relu(128, (3, 3)),
-        MaxPooling2D((2, 2)),
+# class FCRN_Peak_Mask_A(FCRN_Peak_Mask):
+#
+#     def __init__(self, model):
+#         super().__init__(model, threshold = 2.30, mask_size = 4)
 
-        # FC
-        ## TODO:  this is (3, 3) in the paper - switch to that?
-        _conv_bn_relu(512, (5, 5)),
 
-        # UnConv
-        ## TODO: Missing ReLUs
-        UpSampling2D((2, 2)),
-        _conv_bn_relu(128, (3, 3)),
 
-        UpSampling2D((2, 2)),
-        _conv_bn_relu(64, (3, 3)),
-
-        UpSampling2D((2, 2)),
-        _conv_bn_relu(32, (3, 3)),
-
-        Convolution2D(1, (1, 1), kernel_initializer = 'orthogonal', padding = 'same', use_bias = False)
-    ])
-
-    return Model(name = 'fcrn_a', inputs = inputs, outputs = outputs)
-
+def fcrn_b_peak_mask():
+    return FCRN_Peak_Mask_B(_fcrn_b_base())
 
 def _fcrn_b_base():
     inputs = Input(batch_shape = (None, 64, 64, 1))
@@ -92,43 +125,11 @@ def _fcrn_b_base():
 
     return Model(name = 'fcrn_b', inputs = inputs, outputs = outputs)
 
-
-
-## Wrappers - for pre/post processing and resizing ##
-
-class FCRN_Peak_Mask(Wrapper):
-    def __init__(self, model, threshold, mask_size):
-        self.threshold = threshold
-        self.mask_size = mask_size
-        super().__init__(model)
-
-    def post_process(self, predictions):
-        return _count_peak_mask(predictions, self.threshold, self.mask_size)
-
-    def resize(self, target_size):
-        return FCRN_Peak_Mask(_resize_fcrn(self.model, target_size),
-                              threshold = self.threshold,
-                              mask_size = self.mask_size)
-
-    def compile(self):
-        optimizer = SGD(momentum = 0.9, nesterov = True)
-        self.model.compile(optimizer, 'mean_squared_error')
-
-    def fit(self, images, labels, **kwargs):
-        density_map = labels[0]
-        return self.model.fit(images, density_map, **kwargs)
-
-
-
-class FCRN_Peak_Mask_A(FCRN_Peak_Mask):
-
-    def __init__(self, model):
-        super().__init__(model, threshold = 2.30, mask_size = 4)
-
 class FCRN_Peak_Mask_B(FCRN_Peak_Mask):
 
     def __init__(self, model):
         super().__init__(model, threshold = 1.1572, mask_size = 7)
+
 
 
 ## Post-processing with Peak Masks ##
