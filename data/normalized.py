@@ -58,12 +58,11 @@ def test_set_mini(config = gen.Config()):
 
 
 def _training_set_normalized(size, config):
-    images, density_maps, masks, counts = gen.training_set(size, config)
+    images, density_maps, counts = gen.training_set(size, config)
 
     return (
         np.array([ImageNormalizer.normalize(i) for i in images]),
         np.array([DensityMapNormalizer.normalize(d) for d in density_maps]),
-        np.array(masks),
         np.array(counts)
     )
 

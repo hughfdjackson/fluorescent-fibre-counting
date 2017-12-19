@@ -372,8 +372,7 @@ class Config:
            max_fibre_width = 3, min_fibre_width = 1,
            max_fibre_length = 125, min_fibre_length = 20,
            max_background_fibres = 2,
-           curve_change_sigma = 0.075,
-           mask_size = (12, 12) ## TODO: remove
+           curve_change_sigma = 0.075
            ):
 
         self.image_dims = image_dims
@@ -385,7 +384,6 @@ class Config:
         self.min_fibre_length = min_fibre_length
         self.max_background_fibres = max_background_fibres
         self.curve_change_sigma = curve_change_sigma
-        self.mask_size = mask_size
 
 def _pick_natural(minimum = 0, maximum = 1):
     return floor(random() * (maximum - minimum)) + minimum
@@ -452,25 +450,13 @@ def create_density_map(components, config):
 
     return array
 
-def create_mask(components, config):
-    w, h = config.image_dims
-    array = np.zeros((h, w)) # for whatever reason, numpy prefers it in h -> w format
-
-    for component in components:
-        if isinstance(component, Fibre):
-            array = component.update_density_map(array)
-
-    array = np.clip(array, 0.0, 1.0)
-    return filters.maximum_filter(array, size = config.mask_size)
-
 def render_components(components, config):
     w, h = config.image_dims
     image = np.asarray(create_fibre_image(components, config)).reshape(h, w, 1)
     density_map = np.asarray(create_density_map(components, config)).reshape(h, w, 1)
-    masks = np.asarray(create_mask(components, config)).reshape(h, w, 1)
     count = np.sum(density_map) / 2.
 
-    return (image, density_map, masks, count)
+    return (image, density_map, count)
 
 def render_components_set(components_set, config):
     with Pool() as p:
