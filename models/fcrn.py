@@ -65,8 +65,7 @@ def _conv_bn_relu(filters, kernel_size):
 #         MaxPooling2D((2, 2)),
 #
 #         # FC
-#         ## TODO:  this is (3, 3) in the paper - switch to that?
-#         _conv_bn_relu(512, (5, 5)),
+#         _conv_bn_relu(512, (3, 3)),
 #
 #         # UnConv
 #         UpSampling2D((2, 2)),

@@ -298,33 +298,6 @@ class TapeLine(Component):
 def _tuple_addition(xs, ys):
     return tuple(x + y for x, y in zip(xs, ys))
 
-class WhitePaperBand(Component):
-
-    @staticmethod
-    def generate(config):
-        return WhitePaperBand({
-            'color': _pick_natural(200, 255),
-            'noise': _gen_noise(config.image_dims),
-            'poly_points': [
-                _pick_point_within(config.image_dims),
-                _pick_point_within(config.image_dims),
-                _pick_point_within(config.image_dims)
-            ]
-        })
-
-    def draw(self, image):
-        draw = ImageDraw.Draw(image, 'RGBA')
-        draw.polygon(self.state['poly_points'], fill = _color(self.state['color']))
-
-        noise = self.state['noise']
-        noise = noise.repeat(3).reshape(noise.shape + (3,))
-
-        array = np.asarray(image).astype('float32')
-        array += noise
-        array = np.clip(array, 0, array.max())
-
-        return Image.fromarray(array.astype('uint8'))
-
 
 class Blur(Component):
 
@@ -349,20 +322,6 @@ class DensityMapBlur(Component):
     def update_density_map(self, array):
         return gaussian_filter(array, sigma = self.sigma, mode = 'constant', cval = 0.0)
 
-
-class Brightness(Component):
-
-    @staticmethod
-    def generate(config):
-        return Brightness({
-            'scalar': _pick_float(0.25, 1.5)
-        })
-
-    def draw(self, image):
-        enhance = ImageEnhance.Brightness(image)
-        return enhance.enhance(self.state['scalar'])
-
-def identity(x): return x
 
 class Config:
 
@@ -391,22 +350,12 @@ def _pick_natural(minimum = 0, maximum = 1):
 def _pick_float(minimum = 0, maximum = 1.0):
     return (random() * (maximum - minimum)) + minimum
 
-def _pick_point_within(bounding_box):
-    return (
-        _pick_natural(maximum = bounding_box[0]),
-        _pick_natural(maximum = bounding_box[1])
-    )
-
-def get_mid_point(a, b):
-    return a + (b - a) * 0.5
 
 def clip_within_border(point, config):
     x, y = point
     w_, h_ = config.image_dims
 
-    ## Accounting for border of 5 standard deviations of the image edge
-    ## when the training dots are made.  This makes sure that none of the
-    ## density map's blurred dots overlap the edge of the image.
+    ## To avoid points on the edge of the image
     w, h = w_ - 5, h_ - 5
     return np.clip(x, 5, w), np.clip(y, 5, h)
 
@@ -419,7 +368,6 @@ def gen_components(config):
     num_background_fibres = _pick_natural(maximum = config.max_background_fibres)
 
     background = Background.generate(config)
-    #white_paper = WhitePaperBand.generate(config)
 
     fluorescent_fibres = [Fibre.generate(config) for i in range(num_fibres)]
     background_fibres = [NonFluorescentFibre.generate(config) for i in range(num_background_fibres)]
@@ -428,7 +376,6 @@ def gen_components(config):
     tape_line = TapeLine.generate(config)
 
     blur = Blur.generate(config)
-    # brightness = Brightness.generate(config)
     density_map_blur = DensityMapBlur.generate(config)
 
     return [background] + fibres + [tape_line, blur, density_map_blur]

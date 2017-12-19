@@ -17,8 +17,7 @@ class Normalizer:
         self.denormalize = denormalize
 
 ImageNormalizer = Normalizer(
-    ## TODO: float32 everywhere - unnecessary complication
-    lambda x: x.astype('float64') / 255.,
+    lambda x: x.astype('float32') / 255.,
     lambda x: (x * 255.).astype('uint8')
 )
 
