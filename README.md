@@ -44,7 +44,7 @@ To obtain an estimate of the count from pre-processed images:
 
 ```bash
 $ source activate fluorescent-fibre-counting
-$ python -m count.py <directory of preprocessed images> results.csv
+$ python -m count <directory of preprocessed images> results.csv
 ```
 
 
