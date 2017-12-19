@@ -3,8 +3,8 @@ from models.fcrn import (
     fcrn_b_peak_mask
 )
 
-from build.train_and_test import train_and_test
+from build.peak_mask_hyperopt import optimize_hyper_params
+from models.model import load
 
 if __name__ == '__main__':
-    train_and_test(fcrn_a_peak_mask())
-    train_and_test(fcrn_b_peak_mask())
+    optimize_hyper_params(load('builds/FCRN_Peak_Mask_B-fcrn_b/1/FCRN_Peak_Mask_B-fcrn_b.hdf5'))
