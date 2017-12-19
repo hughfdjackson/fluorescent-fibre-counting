@@ -6,7 +6,7 @@ from math import floor, pi, cos, sin, tanh, sqrt
 import numpy as np
 import itertools
 
-from scipy.ndimage import gaussian_filter, filters
+from scipy.ndimage import gaussian_filter, filters, interpolation
 from multiprocessing import Pool
 
 class Component():
@@ -219,20 +219,9 @@ class FibreBubble(Component):
 
         return image
 
-_noise_shape = (2 ** 12) * (2 ** 12)
-_noise = np.random.normal(np.empty(_noise_shape)).repeat(3).reshape((_noise_shape, 3))
+_noise_shape = (2 ** 12), (2 ** 12)
+_noise = np.random.normal(np.empty(_noise_shape)).repeat(3).reshape(_noise_shape + (3,))
 
-
-def _gen_noise_bounds(image_dims):
-    size = image_dims[0] * image_dims[1]
-    start = _pick_natural(maximum = _noise.shape[0] - size - 1)
-
-    return start, start + size
-
-def _pick_noise_from_bounds(bounds, image_dims):
-    start, end = bounds
-    w, h = image_dims
-    return _noise[start:end].reshape((h, w, 3))
 
 class Background(Component):
 
@@ -242,8 +231,8 @@ class Background(Component):
         return Background({
             'color': _color(_pick_natural(0, 50)),
             'bounding_box': [(0, 0), config.image_dims],
-            'noise_bounds': _gen_noise_bounds(config.image_dims),
             'noise_degree': _pick_float(0, 3),
+            'noise_shift': (_pick_natural(0, 100), _pick_natural(0, 100)),
             'image_dims': config.image_dims
         })
 
@@ -251,7 +240,8 @@ class Background(Component):
         draw = ImageDraw.Draw(image, 'RGBA')
         draw.rectangle(self.state['bounding_box'], fill = self.state['color'])
 
-        noise = _pick_noise_from_bounds(self.state['noise_bounds'], self.state['image_dims'])
+        w, h = self.state['image_dims']
+        noise = np.roll(_noise[:h, :w, :], self.state['noise_shift'], axis = (0, 1))
         noise *= self.state['noise_degree']
 
         array = np.asarray(image).astype('float32')
