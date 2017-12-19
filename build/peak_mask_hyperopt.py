@@ -14,13 +14,14 @@ radius_space = hp.quniform('mask_size', 3, 12, 1)
 def test_single_configuration(model, counts, density_maps, opts):
     threshold, mask_size = opts
 
-    print('testing: threshold {}, mask_size {}'.format(threshold, mask_size))
 
     model.threshold = threshold
     model.mask_size = mask_size
     estimates = model.post_process(density_maps)
 
     loss = np.mean((counts - estimates) ** 2)
+
+    print('testing: threshold {}, mask_size {}, loss {}'.format(threshold, mask_size, loss))
 
     return {
         'loss': loss,

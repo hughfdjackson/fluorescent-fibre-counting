@@ -128,7 +128,7 @@ class FCRN_Peak_Mask_A(FCRN_Peak_Mask):
 class FCRN_Peak_Mask_B(FCRN_Peak_Mask):
 
     def __init__(self, model):
-        super().__init__(model, threshold = 1.91, mask_size = 3)
+        super().__init__(model, threshold = 1.1572, mask_size = 7)
 
 
 ## Post-processing with Peak Masks ##
