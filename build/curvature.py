@@ -6,7 +6,7 @@ from data.generate import Config
 from models.model import test
 
 
-def test_with_increasing_curve(model):
+def test_with_increasing_curve(model, number_of_sigmas = 11):
     test_set_size = 100
     image_dims = (3555, 1556)
 
@@ -14,7 +14,7 @@ def test_with_increasing_curve(model):
 
     sigma_min = 0.
     sigma_max = 0.025
-    sigma_values = np.linspace(sigma_min, sigma_max, 11)
+    sigma_values = np.linspace(sigma_min, sigma_max, number_of_sigmas)
 
 
     test_set_configs = [

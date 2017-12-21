@@ -327,11 +327,11 @@ class Config:
 
     def __init__(self,
            image_dims = (64, 64),
-           max_fibres = 3, min_fibres = 1,
+           max_fibres = 2, min_fibres = 1,
            max_fibre_width = 3, min_fibre_width = 1,
            max_fibre_length = 125, min_fibre_length = 20,
-           max_background_fibres = 2,
-           curve_change_sigma = 0.075
+           max_background_fibres = 1, min_background_fibres = 0,
+           curve_change_sigma = 0.0125
            ):
 
         self.image_dims = image_dims
@@ -342,6 +342,7 @@ class Config:
         self.max_fibre_length = max_fibre_length
         self.min_fibre_length = min_fibre_length
         self.max_background_fibres = max_background_fibres
+        self.min_background_fibres = min_background_fibres
         self.curve_change_sigma = curve_change_sigma
 
 def _pick_natural(minimum = 0, maximum = 1):
@@ -365,7 +366,7 @@ def pick_fibre_number(config):
 
 def gen_components(config):
     num_fibres = pick_fibre_number(config)
-    num_background_fibres = _pick_natural(maximum = config.max_background_fibres)
+    num_background_fibres = _pick_natural(config.min_background_fibres, config.max_background_fibres)
 
     background = Background.generate(config)
 

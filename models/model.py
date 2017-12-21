@@ -118,7 +118,7 @@ def test(model, test_set, test_labels = None):
         title = model.name,
         message = 'testing model.'
     )
-    images, density_maps, masks, counts = test_set
+    images, density_maps, counts = test_set
 
     def predict(i, image):
         print('predicting image {}'.format(i))

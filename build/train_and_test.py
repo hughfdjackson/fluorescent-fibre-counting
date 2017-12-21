@@ -6,9 +6,24 @@ from data.generate import Config
 import pandas as pd
 import numpy as np
 
+def train_model(model):
+    return train(model, training_set(size = 50000))
+
+def train_only(model):
+    trained, training_history = train_model(model)
+    save_build(trained, training_history, None)
+
+    return trained
+
+def test_only(model):
+    test_results = run_realistic_tests(model)
+    save_build(model, test_results = test_results)
+
+    return model
+
 
 def train_and_test(model):
-    trained, training_history = train(model, training_set(size = 50000))
+    trained, training_history = train_model(model)
     test_results = run_realistic_tests(trained)
 
     save_build(trained,training_history, None)
