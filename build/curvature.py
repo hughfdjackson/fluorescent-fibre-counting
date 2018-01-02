@@ -18,7 +18,11 @@ def test_with_increasing_curve(model, number_of_sigmas = 11):
 
 
     test_set_configs = [
-        Config(image_dims = image_dims, curve_change_sigma = sigma, min_fibres = 100, max_fibres = 200) for sigma in sigma_values
+        Config(image_dims = image_dims,
+               min_curvature_sigma = sigma, max_curvature_sigma = sigma,
+               min_curvature_limit = .125, max_curvature_limit = .125
+               min_fibres = 100,
+               max_fibres = 200) for sigma in sigma_values
     ]
 
     test_results = pd.concat([
