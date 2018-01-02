@@ -82,9 +82,9 @@ def _generate_segment_color(color_range, color, rate_of_color_change):
 
     return color, rate_of_color_change
 
-def _apply_end_colour_penality(i, length, color, color_range, amount):
-    start = tanh(i / amount) * 255
-    end = tanh(length - i / amount) * 255
+def _apply_end_colour_penality(i, length, color, alpha_range, amount):
+    start = tanh(i / amount) * alpha_range[1]
+    end = tanh(length - i / amount) * alpha_range[1]
 
     alpha = int(min(start, end))
 
@@ -110,7 +110,7 @@ def _generate_colors(length, color_range, alpha_range):
 
     color = _pick_natural(*color_bounds)
 
-    color_with_penalty = _apply_end_colour_penality(0, length, _color(color, alpha), color_range, penalty_amount)
+    color_with_penalty = _apply_end_colour_penality(0, length, _color(color, alpha), alpha_range, penalty_amount)
     colors = [color_with_penalty]
     rate_of_color_change = _clip_color_change_rate(_pick_natural(-50, 50))
 
@@ -199,7 +199,7 @@ class NonFluorescentFibre(Component):
 
         return NonFluorescentFibre({
             'path': path,
-            'color': _generate_colors(length, (0, 50), (0, 25)),
+            'color': _generate_colors(length, (0, 50), (0, 50)),
             'width': width,
             'bubble': FibreBubble.generate(path, width)
         })
@@ -239,7 +239,7 @@ class Background(Component):
         return Background({
             'color': _color(_pick_natural(0, 50)),
             'bounding_box': [(0, 0), config.image_dims],
-            'noise_degree': _pick_float(0, 3),
+            'noise_degree': _pick_float(0, 5),
             'noise_shift': (_pick_natural(0, 100), _pick_natural(0, 100)),
             'image_dims': config.image_dims
         })
@@ -359,7 +359,7 @@ class Config:
 
 
 def _pick_natural(minimum = 0, maximum = 1):
-    return floor(random() * (maximum - minimum)) + minimum
+    return int(round(random() * (maximum - minimum)) + minimum)
 
 def _pick_float(minimum = 0, maximum = 1.0):
     return (random() * (maximum - minimum)) + minimum
