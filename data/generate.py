@@ -33,12 +33,12 @@ class Component():
         return array
 
 
-def _generate_point(config, point, angle, rate_of_angle_change):
+def _generate_point(config, point, angle, rate_of_angle_change, curvature_sigma, curvature_limit):
     np.random.seed(_pick_natural(maximum = 1000))
 
     angle += rate_of_angle_change
-    rate_of_angle_change += np.random.normal(loc = 0, scale = config.curve_change_sigma)
-    rate_of_angle_change = np.clip(rate_of_angle_change, -pi * 0.125, pi * 0.125)
+    rate_of_angle_change += np.random.normal(loc = 0, scale = curvature_sigma)
+    rate_of_angle_change = np.clip(rate_of_angle_change, -pi * curvature_limit, pi * curvature_limit)
 
     vector = _vector(angle, 1)
     new_point = (point[0] + vector[0], point[1] + vector[1])
@@ -47,6 +47,8 @@ def _generate_point(config, point, angle, rate_of_angle_change):
 
 
 def _generate_path(config, length, bounds):
+    curvature_sigma = _pick_float(config.min_curvature_sigma, config.max_curvature_sigma)
+    curvature_limit = _pick_float(config.min_curvature_limit, config.max_curvature_limit)
     start_ = (_pick_float(config.image_dims[0]), _pick_float(config.image_dims[1]))
 
     point = clip_within_border(start_, config)
@@ -55,7 +57,13 @@ def _generate_path(config, length, bounds):
     path = [point]
 
     for length_so_far in range(length):
-        point, angle, rate_of_angle_change = _generate_point(config, point, angle, rate_of_angle_change)
+        point, angle, rate_of_angle_change = _generate_point(
+            config,
+            point,
+            angle,
+            rate_of_angle_change,
+            curvature_sigma,
+            curvature_limit)
 
         path.append(point)
 
@@ -331,8 +339,9 @@ class Config:
            max_fibre_width = 3, min_fibre_width = 1,
            max_fibre_length = 125, min_fibre_length = 20,
            max_background_fibres = 1, min_background_fibres = 0,
-           curve_change_sigma = 0.0125
-           ):
+           min_curvature_sigma = .01, max_curvature_sigma = .05,
+           min_curvature_limit = .05, max_curvature_limit = .09
+       ):
 
         self.image_dims = image_dims
         self.max_fibres = max_fibres
@@ -343,7 +352,11 @@ class Config:
         self.min_fibre_length = min_fibre_length
         self.max_background_fibres = max_background_fibres
         self.min_background_fibres = min_background_fibres
-        self.curve_change_sigma = curve_change_sigma
+        self.min_curvature_sigma = min_curvature_sigma
+        self.max_curvature_sigma = max_curvature_sigma
+        self.min_curvature_limit = min_curvature_limit
+        self.max_curvature_limit = max_curvature_limit
+
 
 def _pick_natural(minimum = 0, maximum = 1):
     return floor(random() * (maximum - minimum)) + minimum
