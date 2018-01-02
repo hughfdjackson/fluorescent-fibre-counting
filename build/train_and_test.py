@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 def train_model(model):
-    return train(model, training_set(size = 50000))
+    return train(model, training_set(size = 100000))
 
 def train_only(model):
     trained, training_history = train_model(model)
