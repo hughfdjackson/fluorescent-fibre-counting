@@ -155,7 +155,7 @@ class Fibre(Component):
 
         return Fibre({
             'path': path,
-            'color': _generate_colors(length, (125, 200), (150, 255)),
+            'color': _generate_colors(length, (150, 200), (175, 255)),
             'width': width,
             'bubble': FibreBubble.generate(path, width),
             'length': length,
@@ -237,7 +237,7 @@ class Background(Component):
     def generate(config):
         np.random.seed(_pick_natural(maximum = 324230432))
         return Background({
-            'color': _color(_pick_natural(0, 50)),
+            'color': _color(_pick_natural(0, 25)),
             'bounding_box': [(0, 0), config.image_dims],
             'noise_degree': _pick_float(0, 5),
             'noise_shift': (_pick_natural(0, 100), _pick_natural(0, 100)),
@@ -387,12 +387,11 @@ def gen_components(config):
     background_fibres = [NonFluorescentFibre.generate(config) for i in range(num_background_fibres)]
     fibres = (fluorescent_fibres + background_fibres)
     fibres.sort(key = lambda x: random())
-    tape_line = TapeLine.generate(config)
 
     blur = Blur.generate(config)
     density_map_blur = DensityMapBlur.generate(config)
 
-    return [background] + fibres + [tape_line, blur, density_map_blur]
+    return [background] + fibres + [blur, density_map_blur]
 
 def create_fibre_image(components, config):
     image = Image.new('RGB', config.image_dims)
